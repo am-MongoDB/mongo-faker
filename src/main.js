@@ -3,7 +3,7 @@ const { faker } = require('@faker-js/faker');
 const { genDocument } = require('./document');
 
 const numDocs = 1000000;
-const threads = 50;
+const threads = 200;
 const batchSize = 1000;
 
 const uri = process.env.MONGO_URI;
