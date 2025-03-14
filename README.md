@@ -56,7 +56,7 @@ npm start
 
 ## Example Output
 
-```bash
+```
 Connected to MongoDB
 Inserted: 10,000 documents (10.00% complete). Estimated time remaining: 00:09:00
 Inserted: 20,000 documents (20.00% complete). Estimated time remaining: 00:08:00
