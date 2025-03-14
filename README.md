@@ -18,7 +18,7 @@ Mongo Faker is a Node.js application that generates and inserts fake documents i
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone git@github.com:am-MongoDB/mongo-faker.git
 cd mongo-faker
 ```
 
