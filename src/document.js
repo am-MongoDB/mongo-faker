@@ -146,8 +146,8 @@ function genDocument() {
     ...sampleDoc,
     region: genInt(1, 50),
     policy_holder: {
-      first_name: getValue("firstNames"),
-      last_name: getValue("lastNames"),
+      first_name: firstName,
+      last_name: lastName,
       dob: genDate(),
       location: {
         street: getValue("streets"),
