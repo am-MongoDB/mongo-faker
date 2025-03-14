@@ -142,6 +142,7 @@ function genDocument() {
   const firstName = getValue("firstNames");
   const lastName = getValue("lastNames");
   const email = genEmailFromName(firstName, lastName);
+  
   return {
     ...sampleDoc,
     region: genInt(1, 50),
