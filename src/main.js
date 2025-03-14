@@ -1,18 +1,41 @@
 const { MongoClient } = require('mongodb');
 const { faker } = require('@faker-js/faker');
+const readline = require('readline');
 const { genDocument } = require('./document');
 
 const numDocs = 1000000;
 const threads = 200;
 const batchSize = 1000;
 
-const uri = process.env.MONGO_URI;
+let uri = process.env.MONGO_URI;
 const dbName = 'Objects';
 const collectionName = 'policy';
 
 let totalStarted = 0; // Counter to track total reserved documents (batches started)
 let completedInserted = 0; // Counter to track total successfully inserted documents
 const startTime = Date.now(); // Record the start time of the application
+
+// Function to prompt the user for MONGO_URI if it's not set
+async function promptForMongoUri() {
+  if (!uri) {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    uri = await new Promise((resolve) => {
+      rl.question('MONGO_URI is not set. Please enter your MongoDB connection string: ', (answer) => {
+        rl.close();
+        resolve(answer.trim());
+      });
+    });
+
+    if (!uri) {
+      console.error('No MongoDB connection string provided. Exiting...');
+      process.exit(1);
+    }
+  }
+}
 
 async function insertFakeData(threadId, client) {
   const db = client.db(dbName);
@@ -54,6 +77,7 @@ async function insertFakeData(threadId, client) {
 }
 
 async function main() {
+  await promptForMongoUri(); // Ensure MONGO_URI is set
   const client = new MongoClient(uri);
 
   try {
