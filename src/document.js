@@ -24,12 +24,15 @@ const sampleFields = [
   { key: "willingToTestify", values: [true, false] }
 ];
 
-// console.log(sampleFields[0].values);
-
 function getValue(key) {
   const field = sampleFields.find(f => f.key === key);
     return field && field.values ? field.values[Math.floor(Math.random() * field.values.length)]: `No values found for ${key}`;
 };
+
+function genEmailFromName(first, last) {
+  const domain = getValue("domains");
+  return `${first}.${last}@${domain}`;
+}
 
 function genDate() {
   return faker.date.past();
@@ -136,12 +139,16 @@ const sampleDoc = {
 };
 
 function genDocument() {
+  const firstName = getValue("firstNames");
+  const lastName = getValue("lastNames");
+  const email = genEmailFromName(firstName, lastName);
+  
   return {
     ...sampleDoc,
     region: genInt(1, 50),
     policy_holder: {
-      first_name: getValue("firstNames"),
-      last_name: getValue("lastNames"),
+      first_name: firstName,
+      last_name: lastName,
       dob: genDate(),
       location: {
         street: getValue("streets"),
@@ -151,7 +158,7 @@ function genDocument() {
       },
       contact: {
         phone: getValue("phoneNumbers"),
-        email: getValue("emails")
+        email: email
       }
     },
     policy_details: {
