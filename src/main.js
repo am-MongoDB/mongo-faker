@@ -3,9 +3,9 @@ const { faker } = require('@faker-js/faker');
 const readline = require('readline');
 const { genDocument } = require('./datasets/drivers');
 
-const numDocs = 10;
-const threads = 1;
-const batchSize = 10;
+const numDocs = 1000000;
+const threads = 100;
+const batchSize = 1000;
 
 let uri = process.env.MONGO_URI;
 const dbName = 'ArbSearch';
