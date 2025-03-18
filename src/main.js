@@ -1,15 +1,15 @@
 const { MongoClient } = require('mongodb');
 const { faker } = require('@faker-js/faker');
 const readline = require('readline');
-const { genDocument } = require('./document');
+const { genDocument } = require('./datasets/drivers');
 
-const numDocs = 2500;
-const threads = 50;
-const batchSize = 50;
+const numDocs = 10;
+const threads = 1;
+const batchSize = 10;
 
 let uri = process.env.MONGO_URI;
-const dbName = 'Objects';
-const collectionName = 'claim';
+const dbName = 'ArbSearch';
+const collectionName = 'drivers';
 
 let totalStarted = 0; // Counter to track total reserved documents (batches started)
 let completedInserted = 0; // Counter to track total successfully inserted documents
