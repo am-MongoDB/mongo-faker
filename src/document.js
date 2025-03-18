@@ -20,7 +20,7 @@ const sampleFields = [
   { key: "emails", values: Array.from({ length: 1000 }, () => faker.internet.email()) },
   { key: "descriptions", values: Array.from({ length: 1000 }, () => faker.lorem.sentence()) },
   { key: "urls", values: Array.from({ length: 1000 }, () => faker.internet.url()) },
-  { key: "statuses", values: ['Pending', 'Under Review', 'Approved', 'Denied'] },
+  { key: "statuses", values: ['Pending', 'Under Review', 'Approved', 'Denied', "Fraud"] },
   { key: "willingToTestify", values: [true, false] }
 ];
 
@@ -134,15 +134,19 @@ const sampleDoc = {
   },
   "last_updated": {
     "$date": "2025-03-05T16:29:30.263Z"
-  },
-  "message_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<InsuranceClaim>\n    <ClaimID>CLM123456789</ClaimID>\n    <PolicyHolder>\n        <FirstName>John</FirstName>\n        <LastName>Doe</LastName>\n        <DOB>1980-05-15</DOB>\n        <Address>\n            <Street>123 Main St</Street>\n            <City>Los Angeles</City>\n            <State>CA</State>\n            <ZipCode>90001</ZipCode>\n        </Address>\n        <Contact>\n            <Phone>+1-555-123-4567</Phone>\n            <Email>johndoe@email.com</Email>\n        </Contact>\n    </PolicyHolder>\n    <PolicyDetails>\n        <PolicyNumber>POL987654321</PolicyNumber>\n        <Type>Auto Insurance</Type>\n        <Provider>ABC Insurance Co.</Provider>\n        <Coverage>\n            <Liability>50000</Liability>\n            <Collision>10000</Collision>\n            <Comprehensive>5000</Comprehensive>\n        </Coverage>\n    </PolicyDetails>\n    <IncidentDetails>\n        <Date>2025-02-15</Date>\n        <Time>14:30</Time>\n        <Location>\n            <Street>456 Elm St</Street>\n            <City>Los Angeles</City>\n            <State>CA</State>\n            <ZipCode>90002</ZipCode>\n        </Location>\n        <Description>Rear-end collision at traffic light.</Description>\n        <PoliceReport>\n            <ReportNumber>LAPD20250215001</ReportNumber>\n            <OfficerName>Officer Smith</OfficerName>\n            <ContactNumber>+1-555-987-6543</ContactNumber>\n        </PoliceReport>\n    </IncidentDetails>\n    <ClaimStatus>Under Review</ClaimStatus>\n    <ClaimAmount>8000</ClaimAmount>\n    <Documents>\n        <Document>\n            <Type>Accident Photos</Type>\n            <URL>https://insuranceco.com/uploads/claim123/photos.zip</URL>\n        </Document>\n        <Document>\n            <Type>Repair Estimate</Type>\n            <URL>https://insuranceco.com/uploads/claim123/estimate.pdf</URL>\n        </Document>\n    </Documents>\n    <Adjuster>\n        <Name>Jane Smith</Name>\n        <ContactNumber>+1-555-234-5678</ContactNumber>\n        <Email>janesmith@insuranceco.com</Email>\n    </Adjuster>\n    <LastUpdated>2025-02-20T10:00:00Z</LastUpdated>\n</InsuranceClaim>"
+  }
 };
+
+const message = { "message_body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<InsuranceClaim>\n    <ClaimID>CLM123456789</ClaimID>\n    <PolicyHolder>\n        <FirstName>John</FirstName>\n        <LastName>Doe</LastName>\n        <DOB>1980-05-15</DOB>\n        <Address>\n            <Street>123 Main St</Street>\n            <City>Los Angeles</City>\n            <State>CA</State>\n            <ZipCode>90001</ZipCode>\n        </Address>\n        <Contact>\n            <Phone>+1-555-123-4567</Phone>\n            <Email>johndoe@email.com</Email>\n        </Contact>\n    </PolicyHolder>\n    <PolicyDetails>\n        <PolicyNumber>POL987654321</PolicyNumber>\n        <Type>Auto Insurance</Type>\n        <Provider>ABC Insurance Co.</Provider>\n        <Coverage>\n            <Liability>50000</Liability>\n            <Collision>10000</Collision>\n            <Comprehensive>5000</Comprehensive>\n        </Coverage>\n    </PolicyDetails>\n    <IncidentDetails>\n        <Date>2025-02-15</Date>\n        <Time>14:30</Time>\n        <Location>\n            <Street>456 Elm St</Street>\n            <City>Los Angeles</City>\n            <State>CA</State>\n            <ZipCode>90002</ZipCode>\n        </Location>\n        <Description>Rear-end collision at traffic light.</Description>\n        <PoliceReport>\n            <ReportNumber>LAPD20250215001</ReportNumber>\n            <OfficerName>Officer Smith</OfficerName>\n            <ContactNumber>+1-555-987-6543</ContactNumber>\n        </PoliceReport>\n    </IncidentDetails>\n    <ClaimStatus>Under Review</ClaimStatus>\n    <ClaimAmount>8000</ClaimAmount>\n    <Documents>\n        <Document>\n            <Type>Accident Photos</Type>\n            <URL>https://insuranceco.com/uploads/claim123/photos.zip</URL>\n        </Document>\n        <Document>\n            <Type>Repair Estimate</Type>\n            <URL>https://insuranceco.com/uploads/claim123/estimate.pdf</URL>\n        </Document>\n    </Documents>\n    <Adjuster>\n        <Name>Jane Smith</Name>\n        <ContactNumber>+1-555-234-5678</ContactNumber>\n        <Email>janesmith@insuranceco.com</Email>\n    </Adjuster>\n    <LastUpdated>2025-02-20T10:00:00Z</LastUpdated>\n</InsuranceClaim>" };
 
 function genDocument() {
   const firstName = getValue("firstNames");
   const lastName = getValue("lastNames");
   const email = genEmailFromName(firstName, lastName);
-  
+  let messages = [];
+  for (let i = 0; i < 301; i++) {
+    messages.push(`${email}-${i}-${message}`);
+  }
   return {
     ...sampleDoc,
     region: genInt(1, 50),
@@ -206,6 +210,7 @@ function genDocument() {
       contact_number: getValue("phoneNumbers"),
       email: getValue("emails")
     },
-    last_updated: genDate()
+    messages: messages,
+    last_updated: genDate(),
   }
 };

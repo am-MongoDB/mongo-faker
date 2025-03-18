@@ -3,13 +3,13 @@ const { faker } = require('@faker-js/faker');
 const readline = require('readline');
 const { genDocument } = require('./document');
 
-const numDocs = 1000000;
-const threads = 200;
-const batchSize = 1000;
+const numDocs = 2500;
+const threads = 50;
+const batchSize = 50;
 
 let uri = process.env.MONGO_URI;
 const dbName = 'Objects';
-const collectionName = 'policy';
+const collectionName = 'claim';
 
 let totalStarted = 0; // Counter to track total reserved documents (batches started)
 let completedInserted = 0; // Counter to track total successfully inserted documents
