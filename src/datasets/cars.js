@@ -1,9 +1,6 @@
 const { faker } = require('@faker-js/faker');
 
-module.exports = {
-  genCar,
-  genOwner
-};
+module.exports = { genDocument };
 
 const sampleFields = [
   { key: "insuranceCompany", values: Array.from({ length: 100 }, () => faker.company.name()) } // Want to reuse this field in multiple documents
@@ -18,10 +15,6 @@ function genEmailFromName(first, last) {
 
   return `${first}.${last}@${faker.internet.domainName()}`;
 }
-
-// function genDate() {
-//   return faker.date.past();
-// };
 
 function genRefNumber(prefix, length) {
   return `${prefix}${Array.from({ length: length }, () => Math.floor(Math.random() * 10)).join('')}`
@@ -96,71 +89,6 @@ function genDrivingLicence(dob) {
 function genDateOfBirth() {
   return faker.date.between({ from: '1950-01-01T00:00:00.000Z', to: '2006-01-01T00:00:00.000Z' });
 }
-
-// function genCars(maxElements) {
-//   const numElements = 
-//     Math.random() < 0.5 ? 1 : Math.floor(Math.random() * maxElements);
-//   return Array.from({ length: numElements }, () => ({
-//     make: faker.vehicle.manufacturer(),
-//     model: faker.vehicle.model(),
-//     year: genInt(2000, 2025),
-//     registration: faker.vehicle.vrm(),
-//     vin: faker.vehicle.vin(),
-//     fuel: faker.vehicle.fuel(),
-//     color: faker.vehicle.color(),
-//     type: faker.vehicle.type(),
-//     taxExpires: faker.date.future()
-//   }));
-// }
-
-// const sampleDoc = 
-//   {
-//     "name": {
-//       "first": "John",
-//       "last": "Doe"
-//     },
-//     dateOfBirth: new Date("1980-05-15T00:00:00.000Z"),
-//     "address": {
-//       "street": "123 Oakwood Drive",
-//       "city": "London",
-//       "postcode": "SW1A 1AA",
-//       "country": "UK"
-//     },
-//     "drivingLicense": {
-//       "number": "DOE1234567890",
-//       "issueDate": Date("2015-06-20T00:00:00Z"),
-//       "expiryDate": Date("2025-06-20T00:00:00Z"),
-//       "categories": ["B", "BE", "C"]
-//     },
-//     "carsOwned": [
-//       {
-//         "make": "Ford",
-//         "model": "Fiesta",
-//         "year": 2018,
-//         "registration": "AB12 CDE"
-//       },
-//       {
-//         "make": "Tesla",
-//         "model": "Model 3",
-//         "year": 2022,
-//         "registration": "EF34 GHI"
-//       }
-//     ],
-//     "motoringConvictions": [
-//       {
-//         "offense": "Speeding",
-//         "date": Date("2021-03-15T00:00:00Z"),
-//         "points": 3,
-//         "fine": 100
-//       },
-//       {
-//         "offense": "Running a red light",
-//         "date": Date("2019-07-10T00:00:00Z"),
-//         "points": 3,
-//         "fine": 200
-//       }
-//     ]
-// };
 
 const payload = `Two households, both alike in dignity,
 In fair Verona, where we lay our scene,
@@ -430,10 +358,14 @@ function genOwner() {
   return removeEmptyFields(doc);
 };
 
-function genCar() {
+let owner = genOwner();
+
+function genDocument() {
   const insuranceStartDate = faker.date.past();
   const insuranceEndDate = new Date(insuranceStartDate.getTime() + 365 * 24 * 60 * 60 * 1000); // Start date + 1 year
-
+  if (Math.random() < 0.9) { // Allow some owners to own multiple cars
+    owner = genOwner();
+  };
   return {
     make: faker.vehicle.manufacturer(),
     model: faker.vehicle.model(),
@@ -452,6 +384,7 @@ function genCar() {
       premium: genRoundInt(20, 200, 10),
       excess: genRoundInt(10, 100, 10)
     },
+    owner: owner,
     payload: payload
   };
 }

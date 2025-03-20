@@ -1,12 +1,11 @@
 const { MongoClient } = require('mongodb');
 const { faker } = require('@faker-js/faker');
 const readline = require('readline');
-// const { genDocument } = require('./datasets/drivers');
-const { genCar, genOwner } = require('./datasets/cars');
+const { genDocument } = require('./datasets/cars');
 
-const numDocs = 20000000;
-const threads = 100;
-const batchSize = 1000;
+const numDocs = 1000;
+const threads = 10;
+const batchSize = 100;
 
 let uri = process.env.MONGO_URI;
 const dbName = 'ArbSearch';
@@ -51,17 +50,7 @@ async function insertFakeData(threadId, client) {
 
     try {
       // Generate and insert fake documents
-      // const documents = Array.from({ length: batchSize }, () => genDocument());
-      let documents = [];
-      let owner = genOwner();
-      for (let i = 0; i < batchSize; i++) {
-        const car = genCar();
-        if (Math.random() < 0.9) { // Allow some owners to own multiple cars
-          owner = genOwner();
-        }
-        car.owner = owner;
-        documents.push(car);
-      }
+      const documents = Array.from({ length: batchSize }, () => genDocument());
       const result = await collection.insertMany(documents);
       completedInserted += result.insertedCount;
       const formattedCompleted = completedInserted.toLocaleString();
