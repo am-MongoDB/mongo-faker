@@ -7,9 +7,59 @@ const numDocs = 1000;
 const threads = 10;
 const batchSize = 100;
 
+// const makes = [
+//   "Aston Martin",
+//   "Audi",
+//   "BMW",
+//   "BYD",
+//   "Bentley",
+//   "Bugatti",
+//   "Cadillac",
+//   "Chevrolet",
+//   "Chrysler",
+//   "Citroën",
+//   "Dodge",
+//   "Ferrari",
+//   "Fiat",
+//   "Ford",
+//   "Honda",
+//   "Hyundai",
+//   "Jaguar",
+//   "Jeep",
+//   "Kia",
+//   "Lamborghini",
+//   "Land Rover",
+//   "MG",
+//   "Mahindra & Mahindra",
+//   "Maruti",
+//   "Maserati",
+//   "Mazda",
+//   "Mercedes Benz",
+//   "Mini",
+//   "Mitsubishi",
+//   "NIO",
+//   "Nissan",
+//   "Peugeot",
+//   "Polestar",
+//   "Porsche",
+//   "Renault",
+//   "Rivian",
+//   "Rolls Royce",
+//   "Skoda",
+//   "Smart",
+//   "Subaru",
+//   "Suzuki",
+//   "Tata",
+//   "Tesla",
+//   "Toyota",
+//   "Vauxhall",
+//   "Volkswagen",
+//   "Volvo"
+// ];
+
 let uri = process.env.MONGO_URI;
 const dbName = 'ArbSearch';
-const collectionName = 'cars';
+const collectionName = 'vehicles';
 
 let totalStarted = 0; // Counter to track total reserved documents (batches started)
 let completedInserted = 0; // Counter to track total successfully inserted documents
@@ -76,6 +126,34 @@ async function insertFakeData(threadId, client) {
   }
 }
 
+// async function updateMake(client, make) {
+//   const db = client.db(dbName);
+//   const collection = db.collection(collectionName);
+//   const update = [
+//     {
+//       $set: {
+//         registrationReversed: {
+//           $function: {
+//             body: "function(str) { return str.split('').reverse().join(''); }",
+//             args: ["$registration"],
+//             lang: "js"
+//           }
+//         }
+//       }
+//     }
+//   ];
+//   try {
+//     const result = await collection.updateMany({
+//         make: make, 
+//         registrationReversed: { $exists: false }
+//       }, 
+//       update
+//     );
+//   } catch (error) {
+//     console.error(`Error updating documents:`, error);
+//   }
+// }
+
 async function main() {
   await promptForMongoUri(); // Ensure MONGO_URI is set
   const client = new MongoClient(uri);
@@ -86,6 +164,10 @@ async function main() {
     console.log('Connected to MongoDB');
 
     const promises = [];
+
+    // for (const make of makes) {
+    //   promises.push(updateMake(client, make));
+    // }
 
     // Start "threads" number of parallel workers
     for (let i = 0; i < threads; i++) {

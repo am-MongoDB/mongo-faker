@@ -363,6 +363,8 @@ let owner = genOwner();
 function genDocument() {
   const insuranceStartDate = faker.date.past();
   const insuranceEndDate = new Date(insuranceStartDate.getTime() + 365 * 24 * 60 * 60 * 1000); // Start date + 1 year
+  const registration = faker.vehicle.vrm();
+  const registrationReversed = registration.split('').reverse().join('');
   if (Math.random() < 0.9) { // Allow some owners to own multiple cars
     owner = genOwner();
   };
@@ -370,7 +372,8 @@ function genDocument() {
     make: faker.vehicle.manufacturer(),
     model: faker.vehicle.model(),
     year: genInt(2000, 2025),
-    registration: faker.vehicle.vrm(),
+    registration: registration,
+    registrationReversed: registrationReversed,
     vin: faker.vehicle.vin(),
     fuel: faker.vehicle.fuel(),
     color: faker.vehicle.color(),
