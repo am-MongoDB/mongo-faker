@@ -1,65 +1,16 @@
 const { MongoClient } = require('mongodb');
 const { faker } = require('@faker-js/faker');
 const readline = require('readline');
-const { genDocument } = require('./datasets/cars');
+const { genDocument } = require('./datasets/errors');
 
-const numDocs = 1000;
+const numDocs = 1000000;
 const threads = 10;
 const batchSize = 100;
-
-// const makes = [
-//   "Aston Martin",
-//   "Audi",
-//   "BMW",
-//   "BYD",
-//   "Bentley",
-//   "Bugatti",
-//   "Cadillac",
-//   "Chevrolet",
-//   "Chrysler",
-//   "Citroën",
-//   "Dodge",
-//   "Ferrari",
-//   "Fiat",
-//   "Ford",
-//   "Honda",
-//   "Hyundai",
-//   "Jaguar",
-//   "Jeep",
-//   "Kia",
-//   "Lamborghini",
-//   "Land Rover",
-//   "MG",
-//   "Mahindra & Mahindra",
-//   "Maruti",
-//   "Maserati",
-//   "Mazda",
-//   "Mercedes Benz",
-//   "Mini",
-//   "Mitsubishi",
-//   "NIO",
-//   "Nissan",
-//   "Peugeot",
-//   "Polestar",
-//   "Porsche",
-//   "Renault",
-//   "Rivian",
-//   "Rolls Royce",
-//   "Skoda",
-//   "Smart",
-//   "Subaru",
-//   "Suzuki",
-//   "Tata",
-//   "Tesla",
-//   "Toyota",
-//   "Vauxhall",
-//   "Volkswagen",
-//   "Volvo"
-// ];
+const shouldEmptyCollection = true;
 
 let uri = process.env.MONGO_URI;
-const dbName = 'ArbSearch';
-const collectionName = 'vehicles';
+const dbName = 'ACMEKubernetes';
+const collectionName = 'failed_message';
 
 let totalStarted = 0; // Counter to track total reserved documents (batches started)
 let completedInserted = 0; // Counter to track total successfully inserted documents
@@ -84,6 +35,17 @@ async function promptForMongoUri() {
       console.error('No MongoDB connection string provided. Exiting...');
       process.exit(1);
     }
+  }
+}
+
+async function emptyCollection(client) {
+  const db = client.db(dbName);
+  const collection = db.collection(collectionName);
+  try {
+    const result = await collection.deleteMany({});
+    console.log(`Emptied collection. Deleted ${result.deletedCount} documents.`);
+  } catch (error) {
+    console.error('Error emptying collection:', error);
   }
 }
 
@@ -126,34 +88,6 @@ async function insertFakeData(threadId, client) {
   }
 }
 
-// async function updateMake(client, make) {
-//   const db = client.db(dbName);
-//   const collection = db.collection(collectionName);
-//   const update = [
-//     {
-//       $set: {
-//         registrationReversed: {
-//           $function: {
-//             body: "function(str) { return str.split('').reverse().join(''); }",
-//             args: ["$registration"],
-//             lang: "js"
-//           }
-//         }
-//       }
-//     }
-//   ];
-//   try {
-//     const result = await collection.updateMany({
-//         make: make, 
-//         registrationReversed: { $exists: false }
-//       }, 
-//       update
-//     );
-//   } catch (error) {
-//     console.error(`Error updating documents:`, error);
-//   }
-// }
-
 async function main() {
   await promptForMongoUri(); // Ensure MONGO_URI is set
   const client = new MongoClient(uri);
@@ -165,9 +99,9 @@ async function main() {
 
     const promises = [];
 
-    // for (const make of makes) {
-    //   promises.push(updateMake(client, make));
-    // }
+    if (shouldEmptyCollection) {
+      await emptyCollection(client);
+    }
 
     // Start "threads" number of parallel workers
     for (let i = 0; i < threads; i++) {
