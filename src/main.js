@@ -1,16 +1,16 @@
 const { MongoClient } = require('mongodb');
 const { faker } = require('@faker-js/faker');
 const readline = require('readline');
-const { genDocument } = require('./datasets/errors');
+const { genDocument } = require('./datasets/reviews');
 
 const numDocs = 1000000;
 const threads = 10;
-const batchSize = 100;
-const shouldEmptyCollection = true;
+const batchSize = 200;
+const shouldEmptyCollection = false;
 
 let uri = process.env.MONGO_URI;
-const dbName = 'ACMEKubernetes';
-const collectionName = 'failed_message';
+const dbName = 'Travel';
+const collectionName = 'reviews';
 
 let totalStarted = 0; // Counter to track total reserved documents (batches started)
 let completedInserted = 0; // Counter to track total successfully inserted documents
@@ -61,7 +61,24 @@ async function insertFakeData(threadId, client) {
     }
 
     try {
+      // let className = null; 
+      // let entityId = null; 
+      // let numImages = (30 + (Math.floor(Math.random() * 50)));
       // Generate and insert fake documents
+      // let documents = [];
+      // for (let i = 0; i < batchSize; i++) {
+      //   const doc = genDocument(className, entityId);
+      //   documents.push(doc);
+      //   if (i % numImages === 0) {
+      //     className = null;
+      //     entityId = null;
+      //     numImages = 30 + Math.floor(Math.random() * 50);
+      //   } else {
+      //     className = doc.class;
+      //     entityId = doc.entityId;
+      //   }
+      // }
+
       const documents = Array.from({ length: batchSize }, () => genDocument());
       const result = await collection.insertMany(documents);
       completedInserted += result.insertedCount;
